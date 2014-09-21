@@ -1,0 +1,34 @@
+---
+
+- name: install web packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - nginx
+    - php5
+    - php5-fpm
+    - php5-cli
+    - php5-pgsql
+    - php5-xsl
+    - php5-sqlite
+    - php5-curl
+
+# - name: disable default pool
+#   command: mv /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.disabled creates=/etc/php5/fpm/pool.d/php-fpm.disabled
+#   notify: restart php-fpm
+
+# - name: create php-fpm pool directory
+#  file: path=/var/run/php5-fpm/ state=directory
+
+# - name: copy php-fpm configuration
+#   template: src=www.conf dest=/etc/php5/fpm/pool.d/{{ website_url }}.conf
+#   notify: restart php-fpm
+
+- name: remove default nginx site configuration
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: copy nginx configuration
+  template: src=default.conf dest=/etc/nginx/sites-enabled/{{ website_url }}
+  notify: restart nginx
+
+- name: make sure nginx is running
+  service: name=nginx state=running

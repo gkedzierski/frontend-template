@@ -1,0 +1,26 @@
+---
+
+- name: install postgresql packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - postgresql
+    - libpq-dev
+    - python-psycopg2
+
+- name: create database
+  postgresql_db: name={{ database_name }} state=present
+  sudo: yes
+  sudo_user: postgres
+
+- name: create database user
+  postgresql_user: db={{ database_name }} name={{ database_user }} password={{ database_password }} role_attr_flags=LOGIN priv=ALL
+  sudo: yes
+  sudo_user: postgres
+
+- name: ensure user does not have unnecessary privilege
+  postgresql_user: name={{ database_name }} role_attr_flags=NOSUPERUSER,NOCREATEDB
+  sudo: yes
+  sudo_user: postgres
+
+- name: make sure postgresql is running
+  service: name=postgresql state=running

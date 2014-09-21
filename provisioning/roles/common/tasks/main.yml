@@ -1,0 +1,14 @@
+---
+
+- name: update apt packages
+  apt: update_cache=yes
+
+- name: install common packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - build-essential
+    - git
+    - nodejs
+    - nodejs-legacy
+    - npm
+    - ruby

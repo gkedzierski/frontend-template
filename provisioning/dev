@@ -1,0 +1,11 @@
+[local-webservers]
+frontend-template.vm.com ansible_ssh_host=192.168.40.51
+
+[webservers:children]
+local-webservers
+
+[dbservers:children]
+local-webservers
+
+[local:children]
+local-webservers

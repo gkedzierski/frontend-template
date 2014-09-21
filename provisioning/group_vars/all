@@ -1,0 +1,5 @@
+---
+
+ansible_ssh_user: ubuntu
+app_folder: /vagrant
+web_folder: "{{ app_folder }}/public"
