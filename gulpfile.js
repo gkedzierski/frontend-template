@@ -9,6 +9,7 @@ var jshint      = require('gulp-jshint');
 var stylish     = require('jshint-stylish');
 var filter      = require('gulp-filter');
 var cache       = require('gulp-cached');
+var copy        = require('gulp-copy');
 
 // Configuration
 var config = {
@@ -88,13 +89,18 @@ gulp.task('watch-js-lint', function () {
         .pipe(jshint.reporter('fail'));
 });
 
+gulp.task('vendor', function () {
+    gulp.src('./bower_components/normalize-css/normalize.css')
+        .pipe(gulp.dest(config.paths.dist.css));
+});
+
 // Reload all Browsers
 gulp.task('bs-reload', function () {
     browserSync.reload();
 });
 
 // Default task, build project and watch
-gulp.task('default', ['scss-lint', 'sass', 'js-lint', 'js', 'browser-sync'], function () {
+gulp.task('default', ['vendor', 'scss-lint', 'sass', 'js-lint', 'js', 'browser-sync'], function () {
     gulp.watch(config.paths.src.sass + '/**/*.scss', ['watch-scss-lint', 'sass']);
     gulp.watch(config.paths.src.js + '/**/*.js', ['watch-js-lint', 'js', 'bs-reload']);
     gulp.watch('**/*.{htm,html,php}', ['bs-reload']);
