@@ -17,4 +17,5 @@ var isProduction = plugins.util.env.prod === true;
 tasks.browsersync(gulp, config, plugins);
 tasks.styles(gulp, plugins, config, isProduction, reload);
 tasks.scripts(gulp, plugins, config, isProduction, reload);
+tasks.build(gulp, plugins, config, isProduction);
 tasks.default(gulp, config);
