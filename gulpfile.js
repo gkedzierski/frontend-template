@@ -1,17 +1,19 @@
 // Require modules
-var gulp         = require('gulp');
-var browserSync  = require('browser-sync');
-var reload       = browserSync.reload;
-var sass         = require("gulp-ruby-sass");
-var scsslint     = require('gulp-scss-lint');
-var browserify   = require('gulp-browserify');
-var jshint       = require('gulp-jshint');
-var stylish      = require('jshint-stylish');
-var filter       = require('gulp-filter');
-var cache        = require('gulp-cached');
-var copy         = require('gulp-copy');
-var autoprefixer = require('gulp-autoprefixer');
-var minifyCSS    = require('gulp-minify-css');
+var gulp        = require('gulp');
+var plugins     = require('gulp-load-plugins')({ lazy: false });
+var browserSync = require('browser-sync');
+var reload      = browserSync.reload;
+
+// var sass         = require("gulp-ruby-sass");
+// var scsslint     = require('gulp-scss-lint');
+// var browserify   = require('gulp-browserify');
+// var jshint       = require('gulp-jshint');
+// var stylish      = require('jshint-stylish');
+// var filter       = require('gulp-filter');
+// var cache        = require('gulp-cached');
+// var copy         = require('gulp-copy');
+// var autoprefixer = require('gulp-autoprefixer');
+// var minifyCSS    = require('gulp-minify-css');
 
 // Configuration
 var config = {
@@ -38,14 +40,14 @@ gulp.task('browser-sync', function() {
 // Compile SASS into single CSS file
 gulp.task('sass', function () {
     return gulp.src(config.paths.src.sass + '/main.scss')
-        .pipe(sass())
-        .pipe(autoprefixer({
+        .pipe(plugins.rubySass())
+        .pipe(plugins.autoprefixer({
             browsers : ['> 1%', 'last 3 versions'],
             cascade  : false
         }))
-        .pipe(minifyCSS())
+        .pipe(plugins.minifyCss())
         .pipe(gulp.dest(config.paths.dist.css))
-        .pipe(filter('**/*.css'))
+        .pipe(plugins.filter('**/*.css'))
         .pipe(reload({
             stream: true
         }));
@@ -54,26 +56,26 @@ gulp.task('sass', function () {
 // Lint SCSS
 gulp.task('scss-lint', function() {
     return gulp.src(config.paths.src.sass + '/**/*.scss')
-        .pipe(scsslint({
+        .pipe(plugins.scssLint({
             config: 'scss-lint.yml'
         }))
-        .pipe(scsslint.failReporter());
+        .pipe(plugins.scssLint.failReporter());
 });
 
 // Lint SCSS (watch)
 gulp.task('watch-scss-lint', function() {
     return gulp.src(config.paths.src.sass + '/**/*.scss')
-        .pipe(cache('scsslint'))
-        .pipe(scsslint({
+        .pipe(plugins.cache('scsslint'))
+        .pipe(plugins.scssLint({
             config: 'scss-lint.yml'
         }))
-        .pipe(scsslint.failReporter());
+        .pipe(plugins.scssLint.failReporter());
 });
 
 // Compile JS
 gulp.task('js', function() {
     gulp.src(config.paths.src.js + '/app.js')
-        .pipe(browserify({
+        .pipe(plugins.browserify({
             insertGlobals : true,
             debug         : true
         }))
@@ -83,18 +85,18 @@ gulp.task('js', function() {
 // Lint JS
 gulp.task('js-lint', function () {
     return gulp.src(config.paths.src.js + '/**/*.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter(stylish))
-        .pipe(jshint.reporter('fail'));
+        .pipe(plugins.jshint())
+        .pipe(plugins.jshint.reporter(plugins.stylish))
+        .pipe(plugins.jshint.reporter('fail'));
 });
 
 // Lint JS (watch)
 gulp.task('watch-js-lint', function () {
     return gulp.src(config.paths.src.js + '/**/*.js')
-        .pipe(cache('jshint'))
-        .pipe(jshint())
-        .pipe(jshint.reporter(stylish))
-        .pipe(jshint.reporter('fail'));
+        .pipe(plugins.cache('jshint'))
+        .pipe(plugins.jshint())
+        .pipe(plugins.jshint.reporter(stylish))
+        .pipe(plugins.jshint.reporter('fail'));
 });
 
 gulp.task('vendor', function () {
